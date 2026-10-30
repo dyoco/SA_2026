@@ -1,0 +1,15 @@
+@startuml c4_context
+!include <C4/C4_Context>
+title C4: Контекст Pet Shop
+
+Person(buyer, "Покупатель", "Питомцы, рекомендации, товары и заказы")
+Person(admin, "Администратор", "Актуальность каталога")
+System(shop, "Pet Shop Recommendation System", "Интернет-магазин с персональными рекомендациями")
+System_Ext(pay, "Payment Service", "Проведение оплаты")
+
+Rel(buyer, shop, "Управляет питомцами, выбирает товары, оформляет заказ")
+Rel(admin, shop, "Обновляет каталог")
+Rel(buyer, pay, "Оплачивает заказ")
+Rel(shop, pay, "Передаёт данные платежа")
+Rel_U(pay, shop, "Сообщает результат оплаты")
+@enduml

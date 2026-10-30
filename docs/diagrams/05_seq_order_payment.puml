@@ -1,0 +1,57 @@
+@startuml seq_order_payment
+title Pet Shop — Оформление заказа и обработка уведомления об оплате
+autonumber
+actor "Покупатель" as U
+boundary "Web Application" as W
+control "Backend API" as A
+collections "Хранилище данных" as D
+participant "Payment Service" as P
+
+U -> W : Оформить заказ с адресом
+W -> A : POST /orders
+A -> D : Получить корзину и товары
+D --> A : Позиции и остатки
+alt Корзина пуста
+  A --> W : 400 Bad Request
+  W --> U : Сообщение «Корзина пуста»
+else Товар недоступен / остатка недостаточно
+  A --> W : 409 Conflict
+  W --> U : Сообщение о недоступном товаре
+else Проверки пройдены
+  A -> A : Рассчитать стоимость
+  A -> D : Сохранить заказ WAITING_PAYMENT
+  A -> P : Создать платёж
+  P --> A : externalPaymentId, ссылка на оплату
+  A -> D : Сохранить платёж, очистить корзину
+  A --> W : 201 Created + заказ и ссылка на оплату
+  W --> U : Показать заказ и перейти к оплате
+  U -> P : Выполнить оплату
+  P -> A : POST /payments/webhook {externalPaymentId, orderId, status}
+  A -> D : Найти платёж и заказ
+  D --> A : Платёж и заказ / отсутствие
+  alt Платёж не найден
+    A --> P : 404 Not Found
+  else Платёж не относится к заказу
+    A --> P : 400 Bad Request
+  else Платёж уже обработан (повторное уведомление)
+    A --> P : 200 OK, already_processed (данные не меняются)
+  else status = PAID
+    A -> D : Платёж и заказ → PAID, списать остатки
+    A --> P : 200 OK, accepted
+  else status = PAYMENT_FAILED
+    A -> D : Платёж и заказ → PAYMENT_FAILED
+    A --> P : 200 OK, accepted
+  end
+  U -> W : Проверить статус заказа
+  W -> A : GET /orders/{order_id}
+  A -> D : Получить заказ и платёж
+  D --> A : Заказ и платёж
+  A --> W : 200 OK + status, paymentStatus
+  W --> U : Показать актуальный статус
+end
+
+note over A, P
+  В прототипе создание платежа имитируется,
+  webhook отправляется вручную через Swagger.
+end note
+@enduml

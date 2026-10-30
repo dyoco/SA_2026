@@ -1,0 +1,25 @@
+@startuml state_order
+title Pet Shop: Состояния заказа
+hide empty description
+
+state "Ожидает оплаты\nWAITING_PAYMENT" as WAITING_PAYMENT
+state "Оплачен\nPAID" as PAID
+state "Оплата не прошла\nPAYMENT_FAILED" as PAYMENT_FAILED
+
+[*] --> WAITING_PAYMENT : POST /orders,\nпроверки корзины пройдены
+WAITING_PAYMENT --> PAID : webhook status = PAID\n/ списать остатки
+WAITING_PAYMENT --> PAYMENT_FAILED : webhook status = PAYMENT_FAILED
+PAID --> [*]
+PAYMENT_FAILED --> [*]
+
+note right of WAITING_PAYMENT
+  Пустая корзина или недоступный товар:
+  ошибка 400 / 409, заказ не создаётся.
+end note
+note bottom of PAID
+  Повторное уведомление по обработанному
+  платежу статус не меняет (already_processed).
+  Доставка, отмена и повторная оплата
+  в объём прототипа не входят.
+end note
+@enduml

@@ -1,0 +1,33 @@
+@startuml c4_container
+!include <C4/C4_Container>
+title C4: Контейнеры проектируемой системы
+
+Person(buyer, "Покупатель", "Выбирает товары и оформляет заказ")
+Person(admin, "Администратор", "Обновляет каталог")
+
+System_Boundary(shop, "Pet Shop Recommendation System") {
+  Container(web, "Web Application", "Веб-приложение", "Интерфейс покупателя и администратора")
+  Container(api, "Backend API", "Python / FastAPI", "Питомцы, каталог, корзина, заказы, webhook")
+  Container(rec, "Recommendation Service", "Рекомендательная логика", "Фильтрация, ранжирование, объяснения")
+  ContainerDb(db, "Database", "Реляционная БД", "Профили, каталог, корзина, заказы и платежи")
+}
+System_Ext(pay, "Payment Service", "Оплата")
+
+Rel(buyer, web, "Использует", "HTTPS")
+Rel(admin, web, "Обновляет каталог", "HTTPS")
+Rel(web, api, "Отправляет запросы", "HTTP / JSON")
+Rel(api, rec, "Передаёт профиль и товары; получает подборку")
+Rel(api, db, "Читает и сохраняет данные", "SQL")
+Rel(api, pay, "Создаёт платёж", "HTTPS / JSON")
+Rel_U(pay, api, "Передаёт результат оплаты", "Webhook")
+
+note right of api
+  В прототипе: Swagger
+  вместо frontend,
+  данные в памяти вместо БД,
+  calculate_recommendations()
+  вместо отдельного сервиса,
+  ручной webhook вместо
+  платёжной интеграции.
+end note
+@enduml

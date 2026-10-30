@@ -1,0 +1,43 @@
+@startuml seq_recommendations
+title Pet Shop — Получение рекомендаций
+autonumber
+actor "Покупатель" as U
+boundary "Web Application" as W
+control "Backend API" as A
+collections "Хранилище данных" as D
+control "Recommendation Service" as R
+
+U -> W : Выбрать питомца
+W -> A : GET /pets/{pet_id}/recommendations
+A -> D : Найти питомца
+D --> A : Профиль / отсутствие
+alt Питомец не найден
+  A --> W : 404 Not Found
+  W --> U : Сообщение об ошибке
+else Питомец найден
+  A -> D : Получить товары
+  D --> A : Каталог
+  A -> R : Передать профиль и товары
+  R -> R : Отфильтровать товары
+  note right
+    Исключаются: недоступные, для другого вида,
+    вне возрастного диапазона,
+    с исключёнными ингредиентами
+  end note
+  R -> R : Начислить баллы и сформировать reasons
+  note right
+    Активность совпадает: +2
+    Размер совпадает: +1
+  end note
+  R -> R : Сортировать по баллу, затем по цене
+  R --> A : Подборка (возможно, пустая)
+  A --> W : 200 OK + рекомендации
+  W --> U : Товары и объяснения
+end
+
+note over W, R
+  В прототипе Web Application заменён Swagger UI,
+  хранилище — данными в памяти,
+  Recommendation Service — функцией calculate_recommendations().
+end note
+@enduml

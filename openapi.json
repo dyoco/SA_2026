@@ -1,0 +1,1565 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Pet Shop Recommendation API",
+    "description": "API интернет-магазина товаров для домашних животных с функцией персонализированных рекомендаций.",
+    "version": "1.1.0"
+  },
+  "paths": {
+    "/ingredients": {
+      "get": {
+        "tags": [
+          "Справочники"
+        ],
+        "summary": "Получить справочник ингредиентов",
+        "description": "Возвращает ингредиенты, которые можно указать как нежелательные в профиле питомца.",
+        "operationId": "get_ingredients_ingredients_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/IngredientResponse"
+                  },
+                  "type": "array",
+                  "title": "Response Get Ingredients Ingredients Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/pets": {
+      "get": {
+        "tags": [
+          "Питомцы"
+        ],
+        "summary": "Получить список питомцев",
+        "description": "Возвращает все созданные профили питомцев.",
+        "operationId": "get_pets_pets_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/PetResponse"
+                  },
+                  "type": "array",
+                  "title": "Response Get Pets Pets Get"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Питомцы"
+        ],
+        "summary": "Создать профиль питомца",
+        "description": "Создаёт профиль питомца для персональных рекомендаций. Дата рождения не может быть в будущем; идентификаторы ингредиентов должны существовать в справочнике GET /ingredients.",
+        "operationId": "create_pet_pets_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PetCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PetResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/pets/{pet_id}": {
+      "patch": {
+        "tags": [
+          "Питомцы"
+        ],
+        "summary": "Изменить профиль питомца",
+        "description": "Частично изменяет профиль: обновляются только переданные поля.",
+        "operationId": "update_pet_pets__pet_id__patch",
+        "parameters": [
+          {
+            "name": "pet_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Pet Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PetUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PetResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Питомец не найден",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/products": {
+      "get": {
+        "tags": [
+          "Каталог"
+        ],
+        "summary": "Получить каталог товаров",
+        "description": "Возвращает список товаров интернет-магазина.",
+        "operationId": "get_products_products_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ProductResponse"
+                  },
+                  "type": "array",
+                  "title": "Response Get Products Products Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/products/{product_id}": {
+      "get": {
+        "tags": [
+          "Каталог"
+        ],
+        "summary": "Получить карточку товара",
+        "description": "Возвращает подробную информацию о выбранном товаре.",
+        "operationId": "get_product_products__product_id__get",
+        "parameters": [
+          {
+            "name": "product_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Product Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Товар не найден",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/pets/{pet_id}/recommendations": {
+      "get": {
+        "tags": [
+          "Рекомендации"
+        ],
+        "summary": "Получить персональные рекомендации",
+        "description": "Формирует подборку товаров для питомца: исключает недоступные товары, товары для другого вида, вне возрастного диапазона и с исключёнными ингредиентами, затем сортирует по баллу соответствия. Пустой список — штатный результат.",
+        "operationId": "get_recommendations_pets__pet_id__recommendations_get",
+        "parameters": [
+          {
+            "name": "pet_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Pet Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecommendationResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Питомец не найден",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cart": {
+      "get": {
+        "tags": [
+          "Корзина"
+        ],
+        "summary": "Получить корзину",
+        "description": "Возвращает позиции корзины и итоговую стоимость.",
+        "operationId": "get_cart_cart_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CartResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cart/items": {
+      "post": {
+        "tags": [
+          "Корзина"
+        ],
+        "summary": "Добавить товар в корзину",
+        "description": "Добавляет товар в корзину. Если товар уже есть в корзине, увеличивается количество в существующей позиции; суммарное количество не может превышать остаток.",
+        "operationId": "add_cart_item_cart_items_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CartItemCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CartItemResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Товар не найден",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Товар недоступен или недостаточно остатка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cart/items/{item_id}": {
+      "patch": {
+        "tags": [
+          "Корзина"
+        ],
+        "summary": "Изменить количество товара",
+        "description": "Устанавливает новое количество товара в позиции корзины.",
+        "operationId": "update_cart_item_cart_items__item_id__patch",
+        "parameters": [
+          {
+            "name": "item_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Item Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CartItemUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CartItemResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Позиция корзины не найдена",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Товар недоступен или недостаточно остатка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Корзина"
+        ],
+        "summary": "Удалить товар из корзины",
+        "description": "Удаляет позицию из корзины.",
+        "operationId": "delete_cart_item_cart_items__item_id__delete",
+        "parameters": [
+          {
+            "name": "item_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Item Id"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "404": {
+            "description": "Позиция корзины не найдена",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/orders": {
+      "post": {
+        "tags": [
+          "Заказы"
+        ],
+        "summary": "Создать заказ",
+        "description": "Создаёт заказ из текущей корзины со статусом WAITING_PAYMENT, регистрирует платёж (заглушка внешнего сервиса) и очищает корзину.",
+        "operationId": "create_order_orders_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OrderCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderCreateResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Корзина пуста",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Товар недоступен или недостаточно остатка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/orders/{order_id}": {
+      "get": {
+        "tags": [
+          "Заказы"
+        ],
+        "summary": "Получить заказ",
+        "description": "Возвращает заказ, его статус и статус оплаты.",
+        "operationId": "get_order_orders__order_id__get",
+        "parameters": [
+          {
+            "name": "order_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Order Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Заказ не найден",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/payments/webhook": {
+      "post": {
+        "tags": [
+          "Оплата"
+        ],
+        "summary": "Обработать уведомление об оплате",
+        "description": "Имитация webhook внешнего платёжного сервиса. PAID переводит заказ в PAID и списывает остатки, PAYMENT_FAILED переводит заказ в PAYMENT_FAILED. Повторное уведомление по уже обработанному платежу ничего не меняет и возвращает status = already_processed (идемпотентность).",
+        "operationId": "payment_webhook_payments_webhook_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PaymentWebhook"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentWebhookResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Платёж не относится к указанному заказу",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Платёж не найден",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CartItemCreate": {
+        "properties": {
+          "productId": {
+            "type": "integer",
+            "title": "Productid"
+          },
+          "quantity": {
+            "type": "integer",
+            "exclusiveMinimum": 0.0,
+            "title": "Quantity"
+          }
+        },
+        "type": "object",
+        "required": [
+          "productId",
+          "quantity"
+        ],
+        "title": "CartItemCreate",
+        "examples": [
+          {
+            "productId": 101,
+            "quantity": 2
+          }
+        ]
+      },
+      "CartItemResponse": {
+        "properties": {
+          "itemId": {
+            "type": "integer",
+            "title": "Itemid"
+          },
+          "productId": {
+            "type": "integer",
+            "title": "Productid"
+          },
+          "quantity": {
+            "type": "integer",
+            "title": "Quantity"
+          }
+        },
+        "type": "object",
+        "required": [
+          "itemId",
+          "productId",
+          "quantity"
+        ],
+        "title": "CartItemResponse"
+      },
+      "CartItemUpdate": {
+        "properties": {
+          "quantity": {
+            "type": "integer",
+            "exclusiveMinimum": 0.0,
+            "title": "Quantity"
+          }
+        },
+        "type": "object",
+        "required": [
+          "quantity"
+        ],
+        "title": "CartItemUpdate",
+        "examples": [
+          {
+            "quantity": 3
+          }
+        ]
+      },
+      "CartResponse": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/CartViewItem"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "totalAmount": {
+            "type": "number",
+            "title": "Totalamount"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items",
+          "totalAmount"
+        ],
+        "title": "CartResponse"
+      },
+      "CartViewItem": {
+        "properties": {
+          "itemId": {
+            "type": "integer",
+            "title": "Itemid"
+          },
+          "productId": {
+            "type": "integer",
+            "title": "Productid"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "quantity": {
+            "type": "integer",
+            "title": "Quantity"
+          },
+          "price": {
+            "type": "number",
+            "title": "Price"
+          },
+          "total": {
+            "type": "number",
+            "title": "Total"
+          }
+        },
+        "type": "object",
+        "required": [
+          "itemId",
+          "productId",
+          "name",
+          "quantity",
+          "price",
+          "total"
+        ],
+        "title": "CartViewItem"
+      },
+      "ErrorResponse": {
+        "properties": {
+          "detail": {
+            "type": "string",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "required": [
+          "detail"
+        ],
+        "title": "ErrorResponse"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "IngredientResponse": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name"
+        ],
+        "title": "IngredientResponse"
+      },
+      "OrderCreate": {
+        "properties": {
+          "deliveryAddress": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Deliveryaddress"
+          }
+        },
+        "type": "object",
+        "required": [
+          "deliveryAddress"
+        ],
+        "title": "OrderCreate",
+        "examples": [
+          {
+            "deliveryAddress": "Санкт-Петербург, Невский проспект, 10"
+          }
+        ]
+      },
+      "OrderCreateResponse": {
+        "properties": {
+          "orderId": {
+            "type": "integer",
+            "title": "Orderid"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "paymentStatus": {
+            "type": "string",
+            "title": "Paymentstatus"
+          },
+          "externalPaymentId": {
+            "type": "string",
+            "title": "Externalpaymentid"
+          },
+          "deliveryAddress": {
+            "type": "string",
+            "title": "Deliveryaddress"
+          },
+          "totalAmount": {
+            "type": "number",
+            "title": "Totalamount"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/OrderItem"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "paymentUrl": {
+            "type": "string",
+            "title": "Paymenturl"
+          }
+        },
+        "type": "object",
+        "required": [
+          "orderId",
+          "status",
+          "paymentStatus",
+          "externalPaymentId",
+          "deliveryAddress",
+          "totalAmount",
+          "items",
+          "paymentUrl"
+        ],
+        "title": "OrderCreateResponse"
+      },
+      "OrderItem": {
+        "properties": {
+          "productId": {
+            "type": "integer",
+            "title": "Productid"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "quantity": {
+            "type": "integer",
+            "title": "Quantity"
+          },
+          "price": {
+            "type": "number",
+            "title": "Price"
+          }
+        },
+        "type": "object",
+        "required": [
+          "productId",
+          "name",
+          "quantity",
+          "price"
+        ],
+        "title": "OrderItem"
+      },
+      "OrderResponse": {
+        "properties": {
+          "orderId": {
+            "type": "integer",
+            "title": "Orderid"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "paymentStatus": {
+            "type": "string",
+            "title": "Paymentstatus"
+          },
+          "externalPaymentId": {
+            "type": "string",
+            "title": "Externalpaymentid"
+          },
+          "deliveryAddress": {
+            "type": "string",
+            "title": "Deliveryaddress"
+          },
+          "totalAmount": {
+            "type": "number",
+            "title": "Totalamount"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/OrderItem"
+            },
+            "type": "array",
+            "title": "Items"
+          }
+        },
+        "type": "object",
+        "required": [
+          "orderId",
+          "status",
+          "paymentStatus",
+          "externalPaymentId",
+          "deliveryAddress",
+          "totalAmount",
+          "items"
+        ],
+        "title": "OrderResponse"
+      },
+      "PaymentWebhook": {
+        "properties": {
+          "externalPaymentId": {
+            "type": "string",
+            "title": "Externalpaymentid"
+          },
+          "orderId": {
+            "type": "integer",
+            "title": "Orderid"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "PAID",
+              "PAYMENT_FAILED"
+            ],
+            "title": "Status"
+          }
+        },
+        "type": "object",
+        "required": [
+          "externalPaymentId",
+          "orderId",
+          "status"
+        ],
+        "title": "PaymentWebhook",
+        "examples": [
+          {
+            "externalPaymentId": "pay_9001",
+            "orderId": 5001,
+            "status": "PAID"
+          }
+        ]
+      },
+      "PaymentWebhookResponse": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "accepted",
+              "already_processed"
+            ],
+            "title": "Status"
+          },
+          "orderId": {
+            "type": "integer",
+            "title": "Orderid"
+          },
+          "orderStatus": {
+            "type": "string",
+            "title": "Orderstatus"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status",
+          "orderId",
+          "orderStatus"
+        ],
+        "title": "PaymentWebhookResponse"
+      },
+      "PetCreate": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Name"
+          },
+          "species": {
+            "type": "string",
+            "enum": [
+              "cat",
+              "dog"
+            ],
+            "title": "Species"
+          },
+          "birthDate": {
+            "type": "string",
+            "format": "date",
+            "title": "Birthdate"
+          },
+          "weight": {
+            "anyOf": [
+              {
+                "type": "number",
+                "exclusiveMinimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Weight"
+          },
+          "size": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "small",
+                  "medium",
+                  "large"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Size"
+          },
+          "activityLevel": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "low",
+                  "normal",
+                  "high"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Activitylevel"
+          },
+          "excludedIngredientIds": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array",
+            "title": "Excludedingredientids",
+            "default": []
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "species",
+          "birthDate"
+        ],
+        "title": "PetCreate",
+        "examples": [
+          {
+            "activityLevel": "normal",
+            "birthDate": "2022-05-15",
+            "excludedIngredientIds": [
+              3
+            ],
+            "name": "Барсик",
+            "size": "medium",
+            "species": "cat",
+            "weight": 4.5
+          }
+        ]
+      },
+      "PetResponse": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "species": {
+            "type": "string",
+            "enum": [
+              "cat",
+              "dog"
+            ],
+            "title": "Species"
+          },
+          "birthDate": {
+            "type": "string",
+            "format": "date",
+            "title": "Birthdate"
+          },
+          "weight": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Weight"
+          },
+          "size": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "small",
+                  "medium",
+                  "large"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Size"
+          },
+          "activityLevel": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "low",
+                  "normal",
+                  "high"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Activitylevel"
+          },
+          "excludedIngredientIds": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array",
+            "title": "Excludedingredientids",
+            "default": []
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "species",
+          "birthDate"
+        ],
+        "title": "PetResponse"
+      },
+      "PetUpdate": {
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "species": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "cat",
+                  "dog"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Species"
+          },
+          "birthDate": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Birthdate"
+          },
+          "weight": {
+            "anyOf": [
+              {
+                "type": "number",
+                "exclusiveMinimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Weight"
+          },
+          "size": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "small",
+                  "medium",
+                  "large"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Size"
+          },
+          "activityLevel": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "low",
+                  "normal",
+                  "high"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Activitylevel"
+          },
+          "excludedIngredientIds": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "integer"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Excludedingredientids"
+          }
+        },
+        "type": "object",
+        "title": "PetUpdate",
+        "examples": [
+          {
+            "activityLevel": "high",
+            "excludedIngredientIds": [
+              3,
+              5
+            ]
+          }
+        ]
+      },
+      "ProductResponse": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description"
+          },
+          "category": {
+            "type": "string",
+            "title": "Category"
+          },
+          "species": {
+            "type": "string",
+            "enum": [
+              "cat",
+              "dog"
+            ],
+            "title": "Species"
+          },
+          "price": {
+            "type": "number",
+            "title": "Price"
+          },
+          "available": {
+            "type": "boolean",
+            "title": "Available"
+          },
+          "stockQuantity": {
+            "type": "integer",
+            "title": "Stockquantity"
+          },
+          "minAgeMonths": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Minagemonths"
+          },
+          "maxAgeMonths": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Maxagemonths"
+          },
+          "activityLevel": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "low",
+                  "normal",
+                  "high"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Activitylevel"
+          },
+          "size": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "small",
+                  "medium",
+                  "large"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Size"
+          },
+          "ingredientIds": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array",
+            "title": "Ingredientids"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "description",
+          "category",
+          "species",
+          "price",
+          "available",
+          "stockQuantity",
+          "ingredientIds"
+        ],
+        "title": "ProductResponse"
+      },
+      "RecommendationItem": {
+        "properties": {
+          "productId": {
+            "type": "integer",
+            "title": "Productid"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "category": {
+            "type": "string",
+            "title": "Category"
+          },
+          "price": {
+            "type": "number",
+            "title": "Price"
+          },
+          "score": {
+            "type": "integer",
+            "title": "Score"
+          },
+          "reasons": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Reasons"
+          }
+        },
+        "type": "object",
+        "required": [
+          "productId",
+          "name",
+          "category",
+          "price",
+          "score",
+          "reasons"
+        ],
+        "title": "RecommendationItem"
+      },
+      "RecommendationResponse": {
+        "properties": {
+          "petId": {
+            "type": "integer",
+            "title": "Petid"
+          },
+          "petName": {
+            "type": "string",
+            "title": "Petname"
+          },
+          "recommendations": {
+            "items": {
+              "$ref": "#/components/schemas/RecommendationItem"
+            },
+            "type": "array",
+            "title": "Recommendations"
+          }
+        },
+        "type": "object",
+        "required": [
+          "petId",
+          "petName",
+          "recommendations"
+        ],
+        "title": "RecommendationResponse"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    }
+  }
+}

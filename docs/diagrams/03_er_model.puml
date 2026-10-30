@@ -1,0 +1,108 @@
+@startuml er_model
+title Pet Shop: Проектируемая модель данных
+hide circle
+hide empty methods
+skinparam linetype ortho
+
+entity User {
+  * id : integer <<PK>>
+  --
+  name : string
+}
+entity Pet {
+  * id : integer <<PK>>
+  --
+  user_id : integer <<FK>>
+  name : string
+  species : string
+  birth_date : date
+  weight : decimal [nullable]
+  size : string [nullable]
+  activity_level : string [nullable]
+}
+entity Ingredient {
+  * id : integer <<PK>>
+  --
+  name : string
+}
+entity PetExcludedIngredient {
+  * pet_id : integer <<PK, FK>>
+  * ingredient_id : integer <<PK, FK>>
+}
+entity Product {
+  * id : integer <<PK>>
+  --
+  name : string
+  description : string
+  category : string
+  species : string
+  price : decimal
+  available : boolean
+  stock_quantity : integer
+  min_age_months : integer [nullable]
+  max_age_months : integer [nullable]
+  activity_level : string [nullable]
+  size : string [nullable]
+}
+entity ProductIngredient {
+  * product_id : integer <<PK, FK>>
+  * ingredient_id : integer <<PK, FK>>
+}
+entity Cart {
+  * id : integer <<PK>>
+  --
+  user_id : integer <<FK>>
+}
+entity CartItem {
+  * id : integer <<PK>>
+  --
+  cart_id : integer <<FK>>
+  product_id : integer <<FK>>
+  quantity : integer
+  ..
+  UNIQUE (cart_id, product_id)
+}
+entity "Order" as Order {
+  * id : integer <<PK>>
+  --
+  user_id : integer <<FK>>
+  status : string
+  total_amount : decimal
+  delivery_address : string
+}
+entity OrderItem {
+  * id : integer <<PK>>
+  --
+  order_id : integer <<FK>>
+  product_id : integer <<FK>>
+  quantity : integer
+  price_at_purchase : decimal
+}
+entity Payment {
+  * id : integer <<PK>>
+  --
+  order_id : integer <<FK>>
+  external_payment_id : string <<UNIQUE>>
+  status : string
+  amount : decimal
+}
+
+User ||--o{ Pet : владеет
+User ||--o| Cart : имеет
+User ||--o{ Order : оформляет
+Pet ||--o{ PetExcludedIngredient : ограничения
+Ingredient ||--o{ PetExcludedIngredient : исключается
+Ingredient ||--o{ ProductIngredient : входит
+Product ||--o{ ProductIngredient : состав
+Cart ||--o{ CartItem : содержит
+Product ||--o{ CartItem : выбран
+Order ||--|{ OrderItem : содержит
+Product ||--o{ OrderItem : заказан
+Order ||--|| Payment : оплачивается
+
+note bottom of Payment
+  Один платёж на заказ.
+  Статус оплаты хранится только здесь;
+  API показывает его в поле paymentStatus заказа.
+end note
+@enduml
